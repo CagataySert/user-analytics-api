@@ -14,7 +14,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   username: string;
 
   @Column()
@@ -22,6 +22,9 @@ export class User {
 
   @Column({ unique: true })
   email: string;
+
+  @Column({ default: false })
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

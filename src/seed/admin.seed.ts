@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { RolesService } from 'src/roles/roles.service';
 import { UsersService } from 'src/users/users.service';
 import { RoleName } from 'src/roles/role.enum';
 
@@ -6,7 +7,10 @@ import { RoleName } from 'src/roles/role.enum';
 export class AdminSeeder {
   private readonly logger = new Logger(AdminSeeder.name);
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly rolesService: RolesService,
+  ) {}
 
   async seed(adminUsername: string, adminEmail: string, adminPassword: string) {
     try {
@@ -20,11 +24,17 @@ export class AdminSeeder {
     } catch (error) {
       if (error instanceof NotFoundException) {
         this.logger.log(`Admin user not found. Proceeding with creation.`);
+
+        await this.rolesService.create({
+          name: RoleName.ADMIN,
+        });
+
         await this.usersService.create({
           username: adminUsername,
           email: adminEmail,
           password: adminPassword,
           roleName: RoleName.ADMIN,
+          isActive: true,
         });
         this.logger.log('Admin user has been created.');
         return;

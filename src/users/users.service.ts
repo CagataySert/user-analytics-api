@@ -25,16 +25,18 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { username, email, password, roleName } = createUserDto;
+    const { username, email, password, roleName, isActive } = createUserDto;
 
-    const existingUserByUsername = await this.usersRepository.findOne({
-      where: { username },
-    });
+    if (username) {
+      const existingUserByUsername = await this.usersRepository.findOne({
+        where: { username },
+      });
 
-    if (existingUserByUsername) {
-      throw new ConflictException(
-        `This username is already taken: ${username}`,
-      );
+      if (existingUserByUsername) {
+        throw new ConflictException(
+          `This username is already taken: ${username}`,
+        );
+      }
     }
 
     const existingUserByEmail = await this.usersRepository.findOne({
@@ -62,6 +64,7 @@ export class UsersService {
       email,
       passwordHash: hashedPassword,
       role,
+      isActive,
     });
 
     return await this.usersRepository.save(user);
@@ -101,9 +104,16 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.usersRepository.findOne({
+      where: { email },
+      relations: ['role'],
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id);
-    const { username, email, password } = updateUserDto;
+    const { username, email, password, isActive } = updateUserDto;
 
     if (username && username !== user.username) {
       const existingUserByUsername = await this.usersRepository.findOne({
@@ -135,6 +145,10 @@ export class UsersService {
 
     if (password) {
       user.passwordHash = await this.hashPassword(password);
+    }
+
+    if (isActive) {
+      user.isActive = isActive;
     }
 
     return await this.usersRepository.save(user);

@@ -1,6 +1,6 @@
 import { Role } from 'src/roles/role.entity';
 
-export class UserResponseDto {
+export class AuthResponseDto {
   id: number;
   username: string;
   email: string;
