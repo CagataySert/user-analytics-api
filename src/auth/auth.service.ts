@@ -8,11 +8,13 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { ActivityLogService } from 'src/activity-log/activity-log.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
-import { RoleName } from 'src/roles/role.enum';
+import { RoleName } from '../roles/role.enum';
+import { ActivityType } from '../activity-log/activity-log.enum';
 
 @Injectable()
 export class AuthService {
@@ -21,11 +23,16 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   async activateUser(token: string) {
     try {
       const payload = await this.jwtService.verify(token);
+
+      if (!payload) {
+        throw new BadRequestException('Invalid token.');
+      }
 
       const user = await this.usersService.findByEmail(payload.email);
 
@@ -92,12 +99,20 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      this.logger.warn(`User with email ${email} not found`);
+      await this.activityLogService.logActivity({
+        type: ActivityType.FAILED_LOGIN,
+        description: `User with email ${email} not found`,
+      });
+
       return null;
     }
 
     if (!user.isActive) {
-      this.logger.warn(`User with email ${email} is not active`);
+      await this.activityLogService.logActivity({
+        type: ActivityType.FAILED_LOGIN,
+        description: `User with email ${email} is not active`,
+      });
+
       throw new UnauthorizedException('User is not activated');
     }
 
@@ -124,6 +139,11 @@ export class AuthService {
       username: user.username,
       role: user.role.name,
     };
+
+    await this.activityLogService.logActivity({
+      userId: user.id,
+      type: ActivityType.LOGIN,
+    });
 
     return {
       accessToken: await this.jwtService.signAsync(payload),

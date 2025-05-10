@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { AdminSeeder } from './seed/admin.seed';
+import { ActivityLogModule } from './activity-log/activity-log.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { AdminSeeder } from './seed/admin.seed';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        synchronize: true,
+        synchronize: process.env.NODE_ENV !== 'production',
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
@@ -30,6 +31,7 @@ import { AdminSeeder } from './seed/admin.seed';
     UsersModule,
     RolesModule,
     CommonModule,
+    ActivityLogModule,
   ],
   controllers: [AppController],
   providers: [AppService, AdminSeeder],

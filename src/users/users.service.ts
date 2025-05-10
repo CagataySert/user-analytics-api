@@ -10,6 +10,8 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesService } from '../roles/roles.service';
+import { ActivityLogService } from '../activity-log/activity-log.service';
+import { ActivityType } from 'src/activity-log/activity-log.enum';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +19,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly rolesService: RolesService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -150,6 +153,11 @@ export class UsersService {
     if (isActive) {
       user.isActive = isActive;
     }
+
+    await this.activityLogService.logActivity({
+      userId: user.id,
+      type: ActivityType.PROFILE_UPDATE,
+    });
 
     return await this.usersRepository.save(user);
   }
