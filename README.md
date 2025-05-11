@@ -31,6 +31,9 @@ npm run seed
 ```
 This will populate the system with initial data, including an admin user and example users for testing purposes.
 
+## 🚧 Planned Improvements
+
+- Cache Interceptor Implementation
 
 ## Overview
 
