@@ -15,7 +15,7 @@ export class SelfOrAdminGuard implements CanActivate {
     const user = request.user;
     const targetUserId = parseInt(request.params.id, 10);
 
-    const isAdmin = user?.roles?.includes(RoleName.ADMIN);
+    const isAdmin = user?.role === RoleName.ADMIN;
     const isSelf = user?.userId === targetUserId;
 
     if (isSelf || isAdmin) {
