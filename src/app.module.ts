@@ -1,4 +1,4 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
@@ -7,8 +7,8 @@ import { RolesModule } from './roles/roles.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
-import { AdminSeeder } from './seed/admin.seed';
-import { ActivityLogModule } from './activity-log/activity-log.module';
+import { ActivityLogsModule } from './activity-logs/activity-logs.module';
+import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
 
 @Module({
   imports: [
@@ -31,29 +31,12 @@ import { ActivityLogModule } from './activity-log/activity-log.module';
     UsersModule,
     RolesModule,
     CommonModule,
-    ActivityLogModule,
+    ActivityLogsModule,
+    AdminAnalyticsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AdminSeeder],
+  providers: [AppService],
 })
 export class AppModule {
-  private readonly logger = new Logger(AdminSeeder.name);
-
-  constructor(
-    private readonly adminSeeder: AdminSeeder,
-    private readonly configService: ConfigService,
-  ) {}
-
-  async onApplicationBootstrap() {
-    const adminUsername = this.configService.get<string>('ADMIN_USERNAME');
-    const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
-    const adminPassword = this.configService.get<string>('ADMIN_PASSWORD');
-
-    if (!adminUsername || !adminEmail || !adminPassword) {
-      this.logger.warn('Admin email or password missing, skipping seed.');
-      return;
-    }
-
-    await this.adminSeeder.seed(adminUsername, adminEmail, adminPassword);
-  }
+  constructor() {}
 }
