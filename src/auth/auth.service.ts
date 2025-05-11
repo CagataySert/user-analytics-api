@@ -8,13 +8,13 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { ActivityLogService } from 'src/activity-log/activity-log.service';
+import { ActivityLogsService } from 'src/activity-logs/activity-logs.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RoleName } from '../roles/role.enum';
-import { ActivityType } from '../activity-log/activity-log.enum';
+import { ActivityType } from '../activity-logs/activity-logs.enum';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly activityLogService: ActivityLogService,
+    private readonly activityLogsService: ActivityLogsService,
   ) {}
 
   async activateUser(token: string) {
@@ -86,6 +86,11 @@ export class AuthService {
     // In production, we would send this token to the user's email
     this.logger.log(`Activation token for ${email}: ${activationToken}`);
 
+    await this.activityLogsService.logActivity({
+      userId: newUser.id,
+      type: ActivityType.REGISTRATION,
+    });
+
     return {
       message:
         'Registration successful. Please check your email to activate your account.',
@@ -99,7 +104,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      await this.activityLogService.logActivity({
+      await this.activityLogsService.logActivity({
         type: ActivityType.FAILED_LOGIN,
         description: `User with email ${email} not found`,
       });
@@ -108,7 +113,7 @@ export class AuthService {
     }
 
     if (!user.isActive) {
-      await this.activityLogService.logActivity({
+      await this.activityLogsService.logActivity({
         type: ActivityType.FAILED_LOGIN,
         description: `User with email ${email} is not active`,
       });
@@ -140,7 +145,7 @@ export class AuthService {
       role: user.role.name,
     };
 
-    await this.activityLogService.logActivity({
+    await this.activityLogsService.logActivity({
       userId: user.id,
       type: ActivityType.LOGIN,
     });

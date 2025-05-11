@@ -5,14 +5,14 @@ import { UsersController } from './users.controller';
 import { User } from './user.entity';
 import { RolesModule } from 'src/roles/roles.module';
 import { CommonModule } from 'src/common/common.module';
-import { ActivityLogModule } from 'src/activity-log/activity-log.module';
+import { ActivityLogsModule } from 'src/activity-logs/activity-logs.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     RolesModule,
     CommonModule,
-    ActivityLogModule,
+    ActivityLogsModule,
   ],
   providers: [UsersService],
   controllers: [UsersController],

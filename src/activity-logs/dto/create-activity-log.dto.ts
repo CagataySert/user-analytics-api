@@ -4,8 +4,9 @@ import {
   MaxLength,
   IsOptional,
   IsInt,
+  IsDate,
 } from 'class-validator';
-import { ActivityType } from '../activity-log.enum';
+import { ActivityType } from '../activity-logs.enum';
 
 export class CreateActivityLogDto {
   @IsNotEmpty()
@@ -19,4 +20,8 @@ export class CreateActivityLogDto {
   @IsInt()
   @IsOptional()
   userId?: number;
+
+  @IsOptional()
+  @IsDate()
+  createdAt?: Date;
 }

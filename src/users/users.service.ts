@@ -10,8 +10,8 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesService } from '../roles/roles.service';
-import { ActivityLogService } from '../activity-log/activity-log.service';
-import { ActivityType } from 'src/activity-log/activity-log.enum';
+import { ActivityLogsService } from '../activity-logs/activity-logs.service';
+import { ActivityType } from 'src/activity-logs/activity-logs.enum';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +19,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly rolesService: RolesService,
-    private readonly activityLogService: ActivityLogService,
+    private readonly activityLogsService: ActivityLogsService,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -154,7 +154,7 @@ export class UsersService {
       user.isActive = isActive;
     }
 
-    await this.activityLogService.logActivity({
+    await this.activityLogsService.logActivity({
       userId: user.id,
       type: ActivityType.PROFILE_UPDATE,
     });
@@ -172,5 +172,9 @@ export class UsersService {
     }
 
     await this.usersRepository.remove(user);
+  }
+
+  async getTotalUserCount(): Promise<number> {
+    return this.usersRepository.count();
   }
 }

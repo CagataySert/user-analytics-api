@@ -4,10 +4,9 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
-import { ActivityType } from './activity-log.enum';
+import { ActivityType } from './activity-logs.enum';
 
 @Entity('activity_logs')
 export class ActivityLog {
@@ -27,6 +26,6 @@ export class ActivityLog {
   @Column({ name: 'user_id', nullable: true })
   userId: number;
 
-  @CreateDateColumn()
+  @Column()
   createdAt: Date;
 }

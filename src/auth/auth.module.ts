@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { ActivityLogModule } from 'src/activity-log/activity-log.module';
+import { ActivityLogsModule } from 'src/activity-logs/activity-logs.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -13,7 +13,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
   imports: [
     UsersModule,
     PassportModule,
-    ActivityLogModule,
+    ActivityLogsModule,
     JwtModule.registerAsync({
       imports: [],
       useFactory: (configService: ConfigService) => ({
