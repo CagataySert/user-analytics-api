@@ -84,5 +84,5 @@ This project is a **User Management and Analytics System** developed using **Nes
 - **Database**: PostgreSQL
 - **Cache/Jobs**: Redis
 - **Authentication**: JWT
-- **Task Scheduler**: e.g., Bull or another job queue library // todo update tech
+- **Task Scheduler**: @nestjs/schedule
 - **API Testing**: Postman
