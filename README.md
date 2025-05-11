@@ -1,98 +1,88 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# User Management & Analytics System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Getting Started
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### Prerequisites
 
-## Description
+- Node.js v18+
+- PostgreSQL
+- Redis
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+### Installation
 
 ```bash
-$ npm install
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Fill in the correct values
+
+# Start the app
+npm run start:dev
 ```
 
-## Compile and run the project
+### Seed Example Data
+After setting up the environment, you can populate the database with example and admin data by running:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Seed the database with example and admin data
+npm run seed
 ```
+This will populate the system with initial data, including an admin user and example users for testing purposes.
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+## Overview
 
-# e2e tests
-$ npm run test:e2e
+This project is a **User Management and Analytics System** developed using **NestJS**, **PostgreSQL**, and **Redis**. The system supports user registration, login, profile management, and real-time analytics for admins. It includes robust role-based access control and background job processing for reporting and monitoring.
 
-# test coverage
-$ npm run test:cov
-```
 
-## Deployment
+## Features
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### ✅ User Registration and Authentication
+- User registration with email and password
+- Secure password hashing
+- JWT-based authentication
+- Simulated email activation (token-based)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### ✅ Role-Based Access Control (RBAC)
+- Two roles: `user` and `admin`
+- Admins can manage users and view analytics
+- Users can log in and manage their profiles
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### ✅ User Activity Tracking
+- Tracks user logins, profile updates, and failed login attempts
+- Activity logs stored in PostgreSQL
+- Recent activity cached in Redis
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### ✅ Admin Analytics Dashboard
+- Metrics shown:
+  - Total number of users
+  - Active users (last 7 days)
+  - Failed login attempts (last 24 hours)
+  - New users registered (last 7 days)
+- Dashboard data cached in Redis (TTL: 10 minutes)
 
-## Resources
+### ✅ Background Jobs
+- Daily reports on:
+  - Number of logins
+  - Failed login attempts
+  - New user registrations
+- Reports stored in PostgreSQL and cached in Redis
 
-Check out a few resources that may come in handy when working with NestJS:
+### 🧪 Additional Features (Implemented if time permits)
+- Rate limiting (e.g., 5 login attempts per 15 minutes)
+- Activity-based alerts for admins (e.g., spikes in failed logins)
+- Dynamic filtering in dashboard by user role and time
+- Cache invalidation strategy to ensure consistency
+  
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Tech Stack
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **Cache/Jobs**: Redis
+- **Authentication**: JWT
+- **Task Scheduler**: e.g., Bull or another job queue library // todo update tech
+- **API Testing**: Postman
