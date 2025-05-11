@@ -18,6 +18,9 @@ export class AdminAnalyticsService {
   }
 
   async getAdminMetrics(): Promise<DashboardAnalyticsDto> {
+    const last7Days = DateHelper.getDateFromRange(TimeRange.LAST_7_DAYS);
+    const last24Hours = DateHelper.getDateFromRange(TimeRange.LAST_24_HOURS);
+
     const [
       totalUsers,
       activeUsersLast7Days,
@@ -27,15 +30,15 @@ export class AdminAnalyticsService {
       this.usersService.getTotalUserCount(),
       this.activityLogsService.countDistinctUserIdsByTypeSince(
         ActivityType.LOGIN,
-        DateHelper.getDateFromRange(TimeRange.LAST_7_DAYS),
+        last7Days,
       ),
       this.activityLogsService.countLogsByTypeSince(
         ActivityType.FAILED_LOGIN,
-        DateHelper.getDateFromRange(TimeRange.LAST_24_HOURS),
+        last24Hours,
       ),
       this.activityLogsService.countLogsByTypeSince(
         ActivityType.REGISTRATION,
-        DateHelper.getDateFromRange(TimeRange.LAST_7_DAYS),
+        last7Days,
       ),
     ]);
 
