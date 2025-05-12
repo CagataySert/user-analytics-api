@@ -1,8 +1,10 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
+import { BullModule } from '@nestjs/bull';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
@@ -11,33 +13,24 @@ import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { ActivityLogsModule } from './activity-logs/activity-logs.module';
 import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
+import { DailyReportsModule } from './daily-reports/daily-reports.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get('REDIS_HOST', 'localhost'),
+        port: configService.get('REDIS_PORT', 6379),
+        ttl: 600, // 10 minutes
+        max: 100,
+      }),
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const logger = new Logger('CacheModule');
-        
-        try {
-          logger.log('Initializing Redis store...');
-          
-          return {
-            store: redisStore,
-            host: configService.get<string>('REDIS_HOST', 'localhost'),
-            port: configService.get<number>('REDIS_PORT', 6379),
-            auth_pass: configService.get<string>('REDIS_PASSWORD'),
-            ttl: 600,
-            max: 100,
-          };
-        } catch (error) {
-          logger.error('Failed to initialize Redis store:', error);
-          throw error;
-        }
-      },
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -53,16 +46,26 @@ import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
       }),
       inject: [ConfigService],
     }),
-    AuthModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST', 'localhost'),
+          port: configService.get('REDIS_PORT', 6379),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    ScheduleModule.forRoot(),
     UsersModule,
+    AuthModule,
     RolesModule,
     CommonModule,
     ActivityLogsModule,
     AdminAnalyticsModule,
+    DailyReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  constructor() {}
-}
+export class AppModule {}
