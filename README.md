@@ -34,6 +34,7 @@ This will populate the system with initial data, including an admin user and exa
 ## 🚧 Planned Improvements
 
 - Cache Interceptor Implementation
+- Rate Limiting for Login Attempts
 
 ## Overview
 
@@ -87,5 +88,5 @@ This project is a **User Management and Analytics System** developed using **Nes
 - **Database**: PostgreSQL
 - **Cache/Jobs**: Redis
 - **Authentication**: JWT
-- **Task Scheduler**: @nestjs/schedule
+- **Task Scheduler**: @nestjs/schedule, @nestjs/bull
 - **API Testing**: Postman
