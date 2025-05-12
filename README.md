@@ -31,6 +31,11 @@ npm run seed
 ```
 This will populate the system with initial data, including an admin user and example users for testing purposes.
 
+### 🧪 Postman Collection
+
+The Postman collection is located at the project root: `./UserAnalyticsAPI.postman_collection.json`.
+
+
 ## 🚧 Planned Improvements
 
 - Cache Interceptor Implementation
